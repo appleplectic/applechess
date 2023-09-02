@@ -112,4 +112,4 @@ class ChessAgent(nn.Module):
 
         :param filename: The filepath to load the model from.
         """
-        self.agent.load_state_dict(torch.load(filename))
+        self.load_state_dict(torch.load(filename))
