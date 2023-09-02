@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     if args.play:
         loaded_agent = ChessAgent().to(device)
-        loaded_agent.load_model(args.model)
+        loaded_agent.load_model("applechess/data/chess_model.pth")
         loaded_agent.play_against_agent(device)
     elif args.train:
         train_agent(device=device, num_games=args.train, train_old="applechess/data/chess_model.pth", calculate_metrics=100)

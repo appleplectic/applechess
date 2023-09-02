@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/applechess.iml" filepath="$PROJECT_DIR$/.idea/applechess.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../applechess/.idea/applechess.iml" filepath="$PROJECT_DIR$/../applechess/.idea/applechess.iml" />
     </modules>
   </component>
 </project>
