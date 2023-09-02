@@ -1,2 +1,11 @@
-/lichess.key
-/stockfish.exe
+# Cannot bundle StockFish because of licensing
+/applechess/data/stockfish*
+
+# Environment should not be bundled
+/venv
+
+# PyCharm stuff
+/.idea/workspace.xml
+/.idea/usage.statistics.xml
+/.idea/shelf/
+/.idea/*.iml
