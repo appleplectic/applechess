@@ -54,7 +54,7 @@ class ChessAgent(nn.Module):
 
         return policy, value
 
-    def select_move(self, board: chess.Board, device: torch.device, epsilon: int = 0.1) -> chess.Move:
+    def select_move(self, board: chess.Board, device: torch.device, epsilon: int = 0.20) -> chess.Move:
         """
         An Epsilon-greedy strategy to select a move.
 
@@ -69,17 +69,19 @@ class ChessAgent(nn.Module):
         if random.random() < epsilon:
             return random.choice(legal_moves)
 
-        best_value = float('-inf')
-        best_move = None
-
+        board_states = []
         for move in legal_moves:
             board.push(move)
-            board_rep = get_board_representation(board, device)
-            _, value = self(board_rep)
-            if value > best_value:
-                best_value = value
-                best_move = move
+            board_rep = get_board_representation(board, device).squeeze(0)
+            board_states.append(board_rep)
             board.pop()
+
+        board_states_tensor = torch.stack(board_states)
+        _, values = self(board_states_tensor)
+        values = values.squeeze()
+
+        best_move_index = torch.argmax(values).item()
+        best_move = legal_moves[best_move_index]
 
         return best_move
 

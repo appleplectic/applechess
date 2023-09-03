@@ -34,7 +34,7 @@ def train_agent(device: torch.device, num_games: int, train_old: str = "", calcu
     agent = ChessAgent().to(device)
     if train_old != "":
         agent.load_state_dict(torch.load(train_old))
-    optimizer = optim.Adam(agent.parameters(), lr=0.001)
+    optimizer = optim.Adam(agent.parameters(), lr=0.005)
     loss_fn = nn.MSELoss()
 
     for game in tqdm(range(num_games), desc="Training games", unit="game"):

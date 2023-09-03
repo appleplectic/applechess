@@ -93,9 +93,11 @@ class ChessEnvironment:
                                  self.board.piece_at(square) and self.board.piece_at(square).color == color)
             reward += (center_control / 4)
 
+        # King safety
         king_safety = get_king_safety(self.board, color) / 6
         reward += king_safety
 
+        # Material difference
         white_material = self.calculate_material(chess.WHITE)
         black_material = self.calculate_material(chess.BLACK)
         material_difference = white_material - black_material if color == chess.WHITE else black_material - white_material
