@@ -26,6 +26,18 @@ class ChessEnvironment:
         chess.KING: 8
     }
 
+    def calculate_material(self, color: chess.WHITE | chess.BLACK) -> int:
+        """
+        Calculates the amount of material the color specified has.
+
+        :param color: The color to calculate the amount of material.
+        :return: The amount of material the color has.
+        """
+
+        return sum(self.PIECE_VALUES[piece_type]
+                   for piece_type in range(1, 7)
+                   for _square in self.board.pieces(piece_type, color))
+
     def __init__(self):
         self.board = chess.Board()
 
@@ -63,13 +75,18 @@ class ChessEnvironment:
 
         if self.board.is_checkmate():
             if self.board.turn == color:
-                return -10
+                return -50
             else:
-                return 10
+                return 50
         elif self.board.is_stalemate() or self.board.is_insufficient_material():
-            return 0.1
+            return -0.5
 
-        reward = 0.01
+        # Small negative to encourage faster games
+        reward = -0.001
+
+        white_material = self.calculate_material(chess.WHITE)
+        black_material = self.calculate_material(chess.BLACK)
+        material_difference = white_material - black_material if color == chess.WHITE else black_material - white_material
 
         # Reward or penalize for captures
         for piece_type in self.PIECE_VALUES.keys():
@@ -77,43 +94,14 @@ class ChessEnvironment:
             current_count = len(self.board.pieces(piece_type, color))
             # If a piece of the bots color is missing, it was captured.
             if prev_count > current_count:
-                reward -= (self.PIECE_VALUES[piece_type] / 2)
+                reward -= (self.PIECE_VALUES[piece_type] / 3)
 
             prev_count_opp = len(prev_board.pieces(piece_type, not color))
             current_count_opp = len(self.board.pieces(piece_type, not color))
             # If a piece of the opposite color is missing, the bot made a capture.
             if prev_count_opp > current_count_opp:
-                reward += (self.PIECE_VALUES[piece_type] / 2)
+                reward += (self.PIECE_VALUES[piece_type] / 3)
 
-        # Reward promotions
-        for square, piece in self.board.piece_map().items():
-            if not prev_board.piece_at(square) and piece.piece_type != chess.PAWN and self.board.color_at(
-                    square) == color:
-                reward += 1.5
+        reward += (material_difference / 2)
 
-        # Reward piece development
-        for piece_pos in self.board.pieces(chess.KNIGHT, color):
-            if (color == chess.WHITE and chess.square_rank(piece_pos) == 0) or (
-                    color == chess.BLACK and chess.square_rank(piece_pos) == 7):
-                reward += 0.5
-
-        # Penalize pieces that don't control many squares
-        for square, piece in self.board.piece_map().items():
-            if piece.color == color:
-                controlled_squares = len(list(self.board.attacks(square)))
-                control_ratio = controlled_squares / self.MAX_CONTROL[piece.piece_type]
-                if control_ratio > 1:
-                    control_ratio = 1
-                reward += self.PIECE_VALUES[piece.piece_type] * control_ratio
-
-        # Penalize doubled pawns
-        for file in range(8):
-            if sum(1 for square in self.board.pieces(chess.PAWN, color) if chess.square_file(square) == file) > 1:
-                reward -= 0.3
-
-        # Reward passed pawns
-        for pawn_pos in self.board.pieces(chess.PAWN, color):
-            if not any(self.board.pieces(chess.PAWN, not color) & chess.BB_FILES[chess.square_file(pawn_pos)]):
-                reward += 0.7
-
-        return float(reward)
+        return reward

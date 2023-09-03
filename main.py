@@ -9,7 +9,6 @@ from applechess.chess_agent import ChessAgent
 from applechess.exceptions import GPUUnsupportedException
 from applechess.train_agent import train_agent
 
-# TODO: Fix metrics
 # TODO: Add arguments for various parameters in train_agent function
 # TODO: Add logging
 # TODO: Add Lichess bot
@@ -42,4 +41,4 @@ if __name__ == "__main__":
         loaded_agent.load_model("applechess/data/chess_model.pth")
         loaded_agent.play_against_agent(device)
     elif args.train:
-        train_agent(device=device, num_games=args.train, train_old="applechess/data/chess_model.pth", calculate_metrics=100)
+        train_agent(device=device, num_games=args.train, train_old="", calculate_metrics=15)

@@ -23,7 +23,9 @@ class ChessAgent(nn.Module):
     def __init__(self):
         super(ChessAgent, self).__init__()
         self.fc = nn.Linear(8 * 8 * 12, 4096)
-        self.fc2 = nn.Linear(4096, 1)
+        self.fc2 = nn.Linear(4096, 2048)
+        self.fc3 = nn.Linear(2048, 1024)
+        self.fc4 = nn.Linear(1024, 1)
 
     def forward(self, board_state: torch.Tensor) -> torch.Tensor:
         """
@@ -35,6 +37,11 @@ class ChessAgent(nn.Module):
         x = self.fc(board_state)
         x = torch.relu(x)
         x = self.fc2(x)
+        x = torch.relu(x)  # Add ReLU activation for the new layer
+        x = self.fc3(x)
+        x = torch.relu(x)  # Add ReLU activation for the next new layer
+        x = self.fc4(x)
+
         return x
 
     def select_move(self, board: chess.Board, device: torch.device, epsilon: int = 0.1) -> chess.Move:
@@ -79,8 +86,11 @@ class ChessAgent(nn.Module):
         while not board.is_game_over():
             if board.turn == chess.WHITE:
                 print(board)
+                print("===============")
                 move = self.select_move(board, device, 0)  # use zero to achieve full performance
+                print(board.san(move))
                 board.push(move)
+                print("===============")
             else:
                 print(board)
                 san_move = input("Enter your move (in SAN format): ")

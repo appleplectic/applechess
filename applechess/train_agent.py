@@ -67,6 +67,7 @@ def train_agent(device: torch.device, num_games: int, train_old: str = "", calcu
                 print("Saving and exiting...")
                 agent.save_model(save_path)
                 raise KeyboardInterrupt("Interrupted while saving.")
+
             try:
                 # Evaluating the performance of the model
                 eval_env = ChessEnvironment()
@@ -74,12 +75,8 @@ def train_agent(device: torch.device, num_games: int, train_old: str = "", calcu
                 eval_done = False
 
                 while not eval_done:
-                    eval_board_rep = get_board_representation(eval_board, device)
-                    with torch.no_grad():
-                        eval_q_values = agent(eval_board_rep)
-                    best_move_index = torch.argmax(eval_q_values).item()
-                    _, eval_reward, eval_done = eval_env.step(best_move_index)
-                    eval_board = eval_env.board
+                    move = agent.select_move(eval_board, device, 0)
+                    eval_board, _, eval_done = eval_env.step(move)
 
                 game_pgn = Game.from_board(eval_env.board)
                 metrics = analyze_game_with_stockfish(game_pgn, stockfish)

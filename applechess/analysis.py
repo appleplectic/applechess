@@ -48,16 +48,21 @@ def analyze_game_with_stockfish(game_pgn: chess.pgn.Game, stockfish_path: str) -
 
     for move in game_pgn.mainline_moves():
         board.push(move)
-        info = engine.analyse(board, chess.engine.Limit(depth=12))
+        info = engine.analyse(board, chess.engine.Limit(time=0.1))
         evaluations.append(info["score"].relative.score())
-        stockfish_moves.append(info["pv"][0])
+        try:
+            stockfish_moves.append(info["pv"][0])
+        except KeyError:
+            # Weird pv error
+            return {}
 
     engine.quit()
 
-    if len(evaluations) != 0:
+    if len(evaluations) != 0 and None not in evaluations:
         acl = sum([abs(evalu) for evalu in evaluations]) / len(evaluations)
     else:
-        acl = 0
+        # Weird NoneType error
+        return {}
 
     blunders = sum(1 for evalu in evaluations if abs(evalu) > 100)
     mistakes = sum(1 for evalu in evaluations if 50 < abs(evalu) <= 100)
