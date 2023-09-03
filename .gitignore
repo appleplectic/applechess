@@ -1,5 +1,11 @@
 # Cannot bundle StockFish because of licensing
-/applechess/data/stockfish*
+/stockfish*
+
+# It's annoying to track models in Git
+/chess_model.pth
+
+# Metrics
+/metrics.csv
 
 # Environment should not be bundled
 /venv

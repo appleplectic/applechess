@@ -9,6 +9,7 @@ import chess.engine
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as f
 
 from applechess.chess_environ import ChessEnvironment
 from applechess.utils import get_board_representation
@@ -22,27 +23,36 @@ class ChessAgent(nn.Module):
 
     def __init__(self):
         super(ChessAgent, self).__init__()
-        self.fc = nn.Linear(8 * 8 * 12, 4096)
-        self.fc2 = nn.Linear(4096, 2048)
-        self.fc3 = nn.Linear(2048, 1024)
-        self.fc4 = nn.Linear(1024, 1)
+        self.conv1 = nn.Conv2d(12, 128, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
 
-    def forward(self, board_state: torch.Tensor) -> torch.Tensor:
+        self.fc = nn.Linear(8 * 8 * 128, 1024)
+        self.policy_head = nn.Linear(1024, 8 * 8 * 73)
+        self.value_head = nn.Linear(1024, 1)
+
+    def forward(self, board_state: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         """
         Processes the given board state through the layers.
 
         :param board_state: A tensor representing the state of the board.
-        :return: The processed tensor after passing through the layers.
+        :return: The processed tensors after passing through the layers.
         """
-        x = self.fc(board_state)
-        x = torch.relu(x)
-        x = self.fc2(x)
-        x = torch.relu(x)  # Add ReLU activation for the new layer
-        x = self.fc3(x)
-        x = torch.relu(x)  # Add ReLU activation for the next new layer
-        x = self.fc4(x)
+        x = f.relu(self.conv1(board_state))
+        x = f.relu(self.conv2(x))
+        x = f.relu(self.conv3(x))
 
-        return x
+        # Flatten the tensor
+        x = x.view(x.size(0), -1)  # x.size(0) is the batch size
+
+        x = f.relu(self.fc(x))
+
+        # Policy and value heads
+        policy = self.policy_head(x)
+        value = torch.tanh(
+            self.value_head(x))  # Using tanh to ensure output is in range [-1, 1], representing game outcome
+
+        return policy, value
 
     def select_move(self, board: chess.Board, device: torch.device, epsilon: int = 0.1) -> chess.Move:
         """
@@ -65,7 +75,7 @@ class ChessAgent(nn.Module):
         for move in legal_moves:
             board.push(move)
             board_rep = get_board_representation(board, device)
-            value = self(board_rep)
+            _, value = self(board_rep)
             if value > best_value:
                 best_value = value
                 best_move = move

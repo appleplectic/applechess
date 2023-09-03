@@ -49,8 +49,9 @@ def train_agent(device: torch.device, num_games: int, train_old: str = "", calcu
             next_board_rep = get_board_representation(next_board, device)
 
             # Q-learning update
-            target = reward + 0.99 * agent(next_board_rep)
-            prediction = agent(board_rep)
+            _, value = agent(next_board_rep)
+            target = reward + 0.99 * value
+            _, prediction = agent(board_rep)
 
             loss = loss_fn(prediction, target)
 

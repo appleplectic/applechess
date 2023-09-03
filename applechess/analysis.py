@@ -6,7 +6,7 @@ import chess
 import csv
 
 
-def append_metrics_to_csv(metrics: dict, filename: str = "applechess/data/metrics.csv") -> None:
+def append_metrics_to_csv(metrics: dict, filename: str = "metrics.csv") -> None:
     """
     Append metrics from training to a CSV file.
 

@@ -4,6 +4,8 @@
 
 import chess
 
+from applechess.utils import get_king_safety, get_game_phase
+
 
 class ChessEnvironment:
     """The Chess Environment the agent works in."""
@@ -55,52 +57,48 @@ class ChessEnvironment:
         """
 
         if self.board.is_legal(cmove):
-            prev_board = self.board
+            color = self.board.turn
             self.board.push(cmove)
-            reward = self.get_reward(prev_board, self.board.turn)
+            reward = self.get_reward(color)
             done = self.board.is_game_over()
             return self.board, reward, done
         else:
             # Invalid move, penalize heavily
             return self.board, -10, True
 
-    def get_reward(self, prev_board: chess.Board, color: chess.WHITE | chess.BLACK) -> int | float:
+    def get_reward(self, color: chess.WHITE | chess.BLACK) -> int | float:
         """
         Gets the reward or punishment based on the move the agent made.
 
-        :param prev_board: The board before the move was made.
         :param color: The color the agent is playing.
-        :return: The reward (positive) or punishment (negative) given to the agent, between -10 and 10.
+        :return: The reward (positive) or punishment (negative) given to the agent.
         """
 
         if self.board.is_checkmate():
             if self.board.turn == color:
-                return -50
+                return -10
             else:
-                return 50
+                return 10
         elif self.board.is_stalemate() or self.board.is_insufficient_material():
             return -0.5
 
         # Small negative to encourage faster games
-        reward = -0.001
+        reward = -0.1
+
+        # Center control
+        center_squares = [chess.D4, chess.D5, chess.E4, chess.E5]
+        game_phase = get_game_phase(self.board)
+        if game_phase in ["opening", "midgame"]:
+            center_control = sum(1 for square in center_squares if
+                                 self.board.piece_at(square) and self.board.piece_at(square).color == color)
+            reward += (center_control / 4)
+
+        king_safety = get_king_safety(self.board, color) / 6
+        reward += king_safety
 
         white_material = self.calculate_material(chess.WHITE)
         black_material = self.calculate_material(chess.BLACK)
         material_difference = white_material - black_material if color == chess.WHITE else black_material - white_material
-
-        # Reward or penalize for captures
-        for piece_type in self.PIECE_VALUES.keys():
-            prev_count = len(prev_board.pieces(piece_type, color))
-            current_count = len(self.board.pieces(piece_type, color))
-            # If a piece of the bots color is missing, it was captured.
-            if prev_count > current_count:
-                reward -= (self.PIECE_VALUES[piece_type] / 3)
-
-            prev_count_opp = len(prev_board.pieces(piece_type, not color))
-            current_count_opp = len(self.board.pieces(piece_type, not color))
-            # If a piece of the opposite color is missing, the bot made a capture.
-            if prev_count_opp > current_count_opp:
-                reward += (self.PIECE_VALUES[piece_type] / 3)
 
         reward += (material_difference / 2)
 

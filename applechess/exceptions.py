@@ -3,4 +3,4 @@
 # applechess
 
 class GPUUnsupportedException(Exception):
-    ...
+    """PyTorch does not support your GPU."""
