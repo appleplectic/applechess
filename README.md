@@ -21,59 +21,7 @@ python main.py -m chess_model.pth play
 
 If you are experiencing this error: `Exception occurred: [WinError 2] The system cannot find the file specified`, you likely do not have StockFish installed.
 
-See full usage details below.
-
-```
-usage: main.py [-h] [-g] [-c] -m MODEL
-               {train,play} ...
-
-A simple chess engine.
-
-positional arguments:
-  {train,play}
-    train         Train via self-play.
-    play          Play the applechess
-                  bot.
-
-options:
-  -h, --help      show this help
-                  message and exit
-  -g, --force-gpu
-                  Force usage of the
-                  CUDA.
-  -c, --force-cpu
-                  Force usage of the
-                  CPU.
-  -m MODEL, --model MODEL
-                  The model to train
-                  or play. If training
-                  a new model, put the
-                  filepath to where
-                  you want the model
-                  to be stored.
-
-
-usage: main.py train [-h] -s STOCKFISH [-m METRICS]
-                     [-n NUM_GAMES]
-
-options:
-  -h, --help            show this help message and exit   
-  -s STOCKFISH, --stockfish STOCKFISH
-                        Path to the StockFish
-                        executable; default PATH or current directory.
-  -e METRICS, --metrics METRICS
-                        How many games before saving and  
-                        calculating metrics; default 50.  
-  -n NUM_GAMES, --num-games NUM_GAMES
-                        How many games to train; default  
-                        1000.
-
-
-usage: main.py play [-h]
-
-options:
-  -h, --help  show this help message and exit
-```
+See full usage details in the help message by running `python main.py --help` or `python main.py train --help`.
 
 ## Contributing
 Please file an issue if you encounter one.
