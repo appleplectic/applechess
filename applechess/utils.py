@@ -93,3 +93,70 @@ def get_king_safety(board: chess.Board, color: chess.WHITE | chess.BLACK) -> int
             safety -= 1
 
     return safety
+
+
+def load_games_from_pgn(pgn_path):
+    games = []
+    with open(pgn_path, 'r') as f:
+        while True:
+            try:
+                game = chess.pgn.read_game(f)
+                if game is None:
+                    break
+                games.append(game)
+            except Exception as e:
+                print(f"Exception occurred when parsing the PGN file: {e}")
+
+    return games
+
+
+def uci_to_index(uci_move):
+    if "O-O" in uci_move:
+        if uci_move == "O-O":
+            return 4096  # White kingside castling
+        elif uci_move == "O-O-O":
+            return 4097  # White queenside castling
+        elif uci_move == "o-o":
+            return 4098  # Black kingside castling
+        elif uci_move == "o-o-o":
+            return 4099  # Black queenside castling
+        elif len(uci_move) == 5:  # Pawn promotion
+            file_from = ord(uci_move[0]) - ord('a')
+            file_to = ord(uci_move[2]) - ord('a')
+            piece = uci_move[4]
+            promotion_offset = {"q": 0, "r": 1, "b": 2, "n": 3}.get(piece, 0)
+            return 4100 + file_from * 8 + file_to + promotion_offset * 64
+
+    else:
+        file_from = ord(uci_move[0]) - ord('a')
+        rank_from = int(uci_move[1]) - 1
+        file_to = ord(uci_move[2]) - ord('a')
+        rank_to = int(uci_move[3]) - 1
+        return (file_from * 8 + rank_from) * 64 + file_to * 8 + rank_to
+
+
+def uci_to_one_hot(uci_move):
+    index = uci_to_index(uci_move)
+    one_hot = torch.zeros(4164)
+    one_hot[index] = 1
+    return one_hot
+
+
+def extract_training_data_from_game(game, device):
+    board = game.board()
+    training_data = []
+    result = game.headers["Result"]
+    if result == "1-0":
+        value = 1
+    elif result == "0-1":
+        value = -1
+    else:
+        value = 0  # Assuming draw for any other result
+
+    for move in game.mainline_moves():
+        board_representation = get_board_representation(board, device).squeeze(0)
+        policy_target = uci_to_one_hot(move.uci())
+        training_data.append((board_representation, policy_target, value))
+        board.push(move)
+
+    return training_data

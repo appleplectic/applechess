@@ -28,7 +28,7 @@ class ChessAgent(nn.Module):
         self.conv3 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
 
         self.fc = nn.Linear(8 * 8 * 128, 1024)
-        self.policy_head = nn.Linear(1024, 8 * 8 * 73)
+        self.policy_head = nn.Linear(1024, 4164)
         self.value_head = nn.Linear(1024, 1)
 
     def forward(self, board_state: torch.Tensor) -> (torch.Tensor, torch.Tensor):

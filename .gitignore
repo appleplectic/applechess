@@ -1,14 +1,8 @@
-# Cannot bundle StockFish because of licensing
 /stockfish*
-
-# It's annoying to track models in Git
 /chess_model.pth
-
-# Metrics
 /metrics.csv
-
-# Environment should not be bundled
 /venv
+/*.pgn
 
 # PyCharm stuff
 /.idea/workspace.xml

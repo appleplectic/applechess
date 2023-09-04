@@ -12,13 +12,13 @@ from tqdm import tqdm
 
 from applechess.analysis import analyze_game_with_stockfish, append_metrics_to_csv
 from applechess.chess_environ import ChessEnvironment
-from applechess.utils import get_board_representation
+from applechess.utils import get_board_representation, extract_training_data_from_game, load_games_from_pgn
 from applechess.chess_agent import ChessAgent
 
 
-def train_agent(device: torch.device, num_games: int, train_old: str = "", calculate_metrics: int = 100,
-                stockfish: str = "applechess/data/stockfish.exe",
-                save_path: str = "applechess/data/chess_model.pth") -> None:
+def train_agent_self_play(device: torch.device, num_games: int, train_old: str = "", calculate_metrics: int = 100,
+                          stockfish: str = "applechess/data/stockfish.exe",
+                          save_path: str = "applechess/data/chess_model.pth") -> None:
     """
     Trains the agent using self-play.
 
@@ -84,3 +84,36 @@ def train_agent(device: torch.device, num_games: int, train_old: str = "", calcu
                 append_metrics_to_csv(metrics)
             except Exception as e:
                 print(f"Exception occurred: {e}")
+
+
+def train_agent_on_pgns(pgn_path, device, save_path, train_old="", epochs=10):
+    print("Initializing...")
+    agent = ChessAgent().to(device)
+    if train_old != "":
+        agent.load_state_dict(torch.load(train_old))
+    optimizer = optim.Adam(agent.parameters(), lr=0.005)
+    loss_fn = nn.MSELoss()
+
+    print("Loading games from PGN...")
+    games = load_games_from_pgn(pgn_path)
+    all_training_data = []
+    for game in games:
+        training_data = extract_training_data_from_game(game, device)
+        all_training_data.extend(training_data)
+
+    board_states, policy_targets, value_targets = zip(*all_training_data)
+    board_states = torch.stack(board_states).to(device)
+    policy_targets = torch.stack(policy_targets).to(device)
+    value_targets = torch.tensor(value_targets, dtype=torch.float).to(device)
+
+    print("Beginning epochs...")
+    for epoch in range(epochs):
+        optimizer.zero_grad()
+        policy_predictions, value_predictions = agent(board_states)
+        loss = loss_fn(policy_predictions, policy_targets) + loss_fn(value_predictions.squeeze(), value_targets)
+        loss.backward()
+        optimizer.step()
+
+        print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
+
+    agent.save_model(save_path)
