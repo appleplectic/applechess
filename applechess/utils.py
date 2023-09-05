@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 # applechess
 
+import io
 import torch
 import chess
 
@@ -95,19 +96,23 @@ def get_king_safety(board: chess.Board, color: chess.WHITE | chess.BLACK) -> int
     return safety
 
 
-def load_games_from_pgn(pgn_path):
-    games = []
-    with open(pgn_path, 'r') as f:
-        while True:
-            try:
-                game = chess.pgn.read_game(f)
-                if game is None:
-                    break
-                games.append(game)
-            except Exception as e:
-                print(f"Exception occurred when parsing the PGN file: {e}")
-
-    return games
+def process_games_from_pgn(pgn_path: str):
+    game_lines = []
+    with open(pgn_path, 'r') as pgn_file:
+        for line in pgn_file:
+            stripped_line = line.strip()
+            if stripped_line.endswith(("1/2-1/2", "0-1", "1-0")):
+                game_lines.append(stripped_line)
+                game_pgn = "\n".join(game_lines)
+                try:
+                    game = chess.pgn.read_game(io.StringIO(game_pgn))
+                    if game is not None:
+                        yield game
+                except Exception as e:
+                    print(f"Error processing game: {e}")
+                game_lines = []
+            else:
+                game_lines.append(stripped_line)
 
 
 def uci_to_index(uci_move):

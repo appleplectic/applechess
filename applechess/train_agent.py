@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 from applechess.analysis import analyze_game_with_stockfish, append_metrics_to_csv
 from applechess.chess_environ import ChessEnvironment
-from applechess.utils import get_board_representation, extract_training_data_from_game, load_games_from_pgn
+from applechess.utils import get_board_representation, extract_training_data_from_game, process_games_from_pgn
 from applechess.chess_agent import ChessAgent
 
 
@@ -91,29 +91,32 @@ def train_agent_on_pgns(pgn_path, device, save_path, train_old="", epochs=10):
     agent = ChessAgent().to(device)
     if train_old != "":
         agent.load_state_dict(torch.load(train_old))
-    optimizer = optim.Adam(agent.parameters(), lr=0.005)
+    optimizer = optim.Adam(agent.parameters(), lr=0.001)
     loss_fn = nn.MSELoss()
 
     print("Loading games from PGN...")
-    games = load_games_from_pgn(pgn_path)
-    all_training_data = []
-    for game in games:
+    i = 0
+    for game in process_games_from_pgn(pgn_path):
         training_data = extract_training_data_from_game(game, device)
-        all_training_data.extend(training_data)
+        if not training_data:
+            continue
 
-    board_states, policy_targets, value_targets = zip(*all_training_data)
-    board_states = torch.stack(board_states).to(device)
-    policy_targets = torch.stack(policy_targets).to(device)
-    value_targets = torch.tensor(value_targets, dtype=torch.float).to(device)
+        board_states, policy_targets, value_targets = zip(*training_data)
+        board_states = torch.stack(board_states).to(device)
+        policy_targets = torch.stack(policy_targets).to(device)
+        value_targets = torch.tensor(value_targets, dtype=torch.float).to(device)
 
-    print("Beginning epochs...")
-    for epoch in range(epochs):
-        optimizer.zero_grad()
-        policy_predictions, value_predictions = agent(board_states)
-        loss = loss_fn(policy_predictions, policy_targets) + loss_fn(value_predictions.squeeze(), value_targets)
-        loss.backward()
-        optimizer.step()
+        for epoch in range(epochs):
+            optimizer.zero_grad()
+            policy_predictions, value_predictions = agent(board_states)
+            loss = loss_fn(policy_predictions, policy_targets) + loss_fn(value_predictions.squeeze(), value_targets)
+            loss.backward()
+            optimizer.step()
 
-        print(f"Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}")
+        if i % 50 == 0:
+            print(f"{i} games successfully processed.")
+            agent.save_model(save_path)
+
+        i += 1
 
     agent.save_model(save_path)
