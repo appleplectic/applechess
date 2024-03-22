@@ -1,0 +1,395 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Usage" href="usage.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>API Reference - Applechess 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Applechess 0.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Applechess 0.1 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">API Reference</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-applechess.chess_agent">
+<span id="api-reference"></span><h1>API Reference<a class="headerlink" href="#module-applechess.chess_agent" title="Link to this heading">#</a></h1>
+<section id="chess-agent-py">
+<h2>chess_agent.py<a class="headerlink" href="#chess-agent-py" title="Link to this heading">#</a></h2>
+<p>This module defines a ChessAgent class that uses the minimax algorithm with alpha-beta pruning to play chess.</p>
+<dl class="simple">
+<dt>Classes:</dt><dd><p>ChessAgent: A class that represents the board and the agent that plays chess.</p>
+</dd>
+<dt>Dependencies:</dt><dd><p>chess (formerly python-chess): A chess library for Python, which provides move generation, validation, and more.</p>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">applechess.chess_agent.</span></span><span class="sig-name descname"><span class="pre">ChessAgent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#applechess.chess_agent.ChessAgent" title="Link to this definition">#</a></dt>
+<dd><p>Class that represents the board and the agent that plays chess.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.GamePhase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GamePhase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.GamePhase" title="Link to this definition">#</a></dt>
+<dd><p>Enum class to represent the game phase.
+Opening is defined as the first 9 moves.
+Midgame is defined as the phase between the opening and the endgame.
+Endgame is defined as the phase when there are less than 24 points of material on the board.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.agent_gen_push_move">
+<span class="sig-name descname"><span class="pre">agent_gen_push_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Move</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.agent_gen_push_move" title="Link to this definition">#</a></dt>
+<dd><p>Generate the best move for the agent and push it.
+:param depth: depth of the search tree.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.get_best_move">
+<span class="sig-name descname"><span class="pre">get_best_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Move</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.get_best_move" title="Link to this definition">#</a></dt>
+<dd><p>Agent that plays a move based on the minimax algorithm.
+:param depth: depth of the search tree.
+:return: the best move to play.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.get_value">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">piece</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Piece</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.get_value" title="Link to this definition">#</a></dt>
+<dd><p>Get the value of a piece. The value is based on the piece type. If an unknown piece is passed, 0 is returned.
+:param piece: the piece to get the value of.
+:return: the value of the piece.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.interactive_terminal">
+<span class="sig-name descname"><span class="pre">interactive_terminal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.interactive_terminal" title="Link to this definition">#</a></dt>
+<dd><p>Play an interactive game in the terminal against the agent.
+:param color: color to play as.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.play_move">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">play_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">move</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Move</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Board</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.play_move" title="Link to this definition">#</a></dt>
+<dd><p>Play a move on a board and return the new board.
+:param board: the board to play the move on.
+:param move: the move to play.
+:return: a new board with the move played.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.pprint">
+<span class="sig-name descname"><span class="pre">pprint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.pprint" title="Link to this definition">#</a></dt>
+<dd><p>Pretty print the board.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.push_move">
+<span class="sig-name descname"><span class="pre">push_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">move</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.push_move" title="Link to this definition">#</a></dt>
+<dd><p>Push a move in SAN/UCI format.
+:param move: string of the move.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="lichess-bot-py">
+<span id="module-applechess.lichess_bot"></span><h2>lichess_bot.py<a class="headerlink" href="#lichess-bot-py" title="Link to this heading">#</a></h2>
+<p>This module defines a Game class that plays chess on Lichess using the berserk library.
+It uses the ChessAgent class to generate moves.</p>
+<p>See README.md for instructions on how to run the bot.</p>
+<dl>
+<dt>Classes:</dt><dd><p>Game: A class that represents a game of chess on Lichess.</p>
+</dd>
+<dt>Dependencies:</dt><dd><p>berserk: A Python library for the Lichess API.</p>
+<p>dotenv: A Python library that reads .env files and adds them to the environment.</p>
+<p>threading: A Python library that provides thread-based parallelism.</p>
+<p>typing: A Python library that provides support for type hints.</p>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="applechess.lichess_bot.Game">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">applechess.lichess_bot.</span></span><span class="sig-name descname"><span class="pre">Game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bot_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">game_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#applechess.lichess_bot.Game" title="Link to this definition">#</a></dt>
+<dd><p>A class that represents a game of chess on Lichess. It plays the game using the ChessAgent class.
+It extends from the threading.Thread class to run the game in a separate thread using the Lichess bot API.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.lichess_bot.Game.noexcept">
+<span class="sig-name descname"><span class="pre">noexcept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#applechess.lichess_bot.Game.noexcept" title="Link to this definition">#</a></dt>
+<dd><p>Calls a function, and if it throws an ApiError, wait 500ms and try again.
+Useful if the connection momentarily breaks.
+:param func: the function to be called.
+:param args: any arguments that should be passed to the function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.lichess_bot.Game.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#applechess.lichess_bot.Game.run" title="Link to this definition">#</a></dt>
+<dd><p>Overrides method of class threading.Thread to run the game loop to play chess on Lichess.
+It handles incoming game events and makes moves using the agent.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          <a class="prev-page" href="usage.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Usage</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, Levin
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">API Reference</a><ul>
+<li><a class="reference internal" href="#chess-agent-py">chess_agent.py</a></li>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent"><code class="docutils literal notranslate"><span class="pre">ChessAgent</span></code></a><ul>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.GamePhase"><code class="docutils literal notranslate"><span class="pre">ChessAgent.GamePhase</span></code></a></li>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.agent_gen_push_move"><code class="docutils literal notranslate"><span class="pre">ChessAgent.agent_gen_push_move()</span></code></a></li>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.get_best_move"><code class="docutils literal notranslate"><span class="pre">ChessAgent.get_best_move()</span></code></a></li>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.get_value"><code class="docutils literal notranslate"><span class="pre">ChessAgent.get_value()</span></code></a></li>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.interactive_terminal"><code class="docutils literal notranslate"><span class="pre">ChessAgent.interactive_terminal()</span></code></a></li>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.play_move"><code class="docutils literal notranslate"><span class="pre">ChessAgent.play_move()</span></code></a></li>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.pprint"><code class="docutils literal notranslate"><span class="pre">ChessAgent.pprint()</span></code></a></li>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.push_move"><code class="docutils literal notranslate"><span class="pre">ChessAgent.push_move()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lichess-bot-py">lichess_bot.py</a></li>
+<li><a class="reference internal" href="#applechess.lichess_bot.Game"><code class="docutils literal notranslate"><span class="pre">Game</span></code></a><ul>
+<li><a class="reference internal" href="#applechess.lichess_bot.Game.noexcept"><code class="docutils literal notranslate"><span class="pre">Game.noexcept()</span></code></a></li>
+<li><a class="reference internal" href="#applechess.lichess_bot.Game.run"><code class="docutils literal notranslate"><span class="pre">Game.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=2709fde1"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
+</html>
