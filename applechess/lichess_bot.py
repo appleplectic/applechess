@@ -27,6 +27,7 @@ Dependencies:
 import os
 import time
 import threading
+import logging
 from typing import Callable
 
 import berserk
@@ -34,7 +35,7 @@ from berserk.exceptions import ApiError
 import chess
 from dotenv import dotenv_values
 
-from applechess.chess_agent import ChessAgent
+from chess_agent import ChessAgent
 
 # Depth of the minimax algorithm
 DEPTH = 3
@@ -58,6 +59,7 @@ class Game(threading.Thread):
         self.stream = bot_client.bots.stream_game_state(game_id)
         self.agent = ChessAgent()
         self.color = chess.WHITE  # should be overwritten
+        logging.debug("Successfully initialized Game() class.")
 
     def run(self) -> None:
         """
@@ -66,8 +68,10 @@ class Game(threading.Thread):
         """
         for bot_event in self.stream:
             if bot_event["type"] == "gameState":
+                logging.debug("Received gameState request.")
                 self._handle_state_change(bot_event)
             elif bot_event["type"] == "gameFull":
+                logging.debug("Received gameFull request.")
                 # if player ID of the white player is the same as the bots ID, bot should be white
                 if bot_event["white"]["id"] == self.client.account.get()["id"]:
                     self.color = chess.WHITE
@@ -82,6 +86,7 @@ class Game(threading.Thread):
         """
         if game_state["status"] != "created" and game_state["status"] != "started":
             # the game ended, should gracefully exit
+            logging.debug(f"Game successfully ended, closing thread {threading.current_thread().ident}")
             return
 
         moves = game_state["moves"].split(" ")
@@ -111,18 +116,22 @@ class Game(threading.Thread):
         """
         try:
             func(*args)
+            logging.debug("Successfully moved piece (noexcept).")
         except ApiError:
-            print("ApiError handled...")
+            logging.error("ApiError handled...")
             time.sleep(0.8)
             func(*args)
             # reinitialize the stream, just in case
             self.stream = self.client.bots.stream_game_state(self.game_id)
+            logging.warning("Successfully handled ApiError.")
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
     config = {
         **dotenv_values("../.env"),
-        **dotenv_values("../.env"),  # load lichess API key from either applechess/ folder or root directory
+        **dotenv_values(".env"),     # load lichess API key from either applechess/ folder or root directory
         **os.environ                 # override loaded values with environment variables
     }
     api_key = config["LICHESS_API_KEY"]
@@ -130,14 +139,19 @@ if __name__ == "__main__":
     session = berserk.TokenSession(api_key)
     client = berserk.Client(session)
 
+    logging.info("Successfully initialized client with API key.")
+
     for event in client.bots.stream_incoming_events():
         if event["type"] == "challenge":
             if event["challenge"]["timeControl"] == "bullet" or event["challenge"]["timeControl"] == "ultraBullet":
                 client.bots.decline_challenge(event["challenge"]["id"], "tooFast")
+                logging.info(f"Declined challenge {event["challenge"]["id"]} due to time control.")
             elif event["challenge"]["variant"]["name"] != "Standard":
                 client.bots.decline_challenge(event["challenge"]["id"], "variant")
+                logging.info(f"Declined challenge {event["challenge"]["id"]} due to variant.")
             else:
                 client.bots.accept_challenge(event["challenge"]["id"])
         elif event["type"] == "gameStart":
             game = Game(client, event["game"]["gameId"])
             game.start()
+            logging.info(f"Accepted challenge {event["game"]["gameId"]}; deferring to thread {game.ident}")
