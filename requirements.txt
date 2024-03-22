@@ -1,0 +1,3 @@
+chess~=1.10.0
+berserk~=0.13.2
+python-dotenv~=1.0.1

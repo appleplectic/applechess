@@ -1,0 +1,26 @@
+# follow README.md to create own virtual environment
+.venv/
+
+# testing notebooks
+.ipynb
+.ipynb_checkpoints
+
+# Python
+__pycache__/
+
+# JetBrains IDEs
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+.idea/**/copilot/
+
+# macOS
+.DS_Store
+
+# environmental variables
+.env
+
+# sphinx
+docs/build/
