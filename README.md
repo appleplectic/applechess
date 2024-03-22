@@ -51,12 +51,9 @@ python lichess_bot.py
 ```
 
 ### Building the Documentation
-First, install `sphinx` and `myst-parser` (to handle Markdown):
-```bash
-python -m pip install -U sphinx myst-parser
-```
+First, follow the previous instructions to download the dependencies.
 
-Now, build the docs:
+Then, build the docs:
 ```bash
 sphinx-build -M html docs/source/ docs/build/
 ```
