@@ -270,44 +270,6 @@ Endgame is defined as the phase when there are less than 24 points of material o
 
 </dd></dl>
 
-<section id="lichess-bot-py">
-<span id="module-applechess.lichess_bot"></span><h2>lichess_bot.py<a class="headerlink" href="#lichess-bot-py" title="Link to this heading">#</a></h2>
-<p>This module defines a Game class that plays chess on Lichess using the berserk library.
-It uses the ChessAgent class to generate moves.</p>
-<p>See README.md for instructions on how to run the bot.</p>
-<dl>
-<dt>Classes:</dt><dd><p>Game: A class that represents a game of chess on Lichess.</p>
-</dd>
-<dt>Dependencies:</dt><dd><p>berserk: A Python library for the Lichess API.</p>
-<p>dotenv: A Python library that reads .env files and adds them to the environment.</p>
-<p>threading: A Python library that provides thread-based parallelism.</p>
-<p>typing: A Python library that provides support for type hints.</p>
-</dd>
-</dl>
-</section>
-<dl class="py class">
-<dt class="sig sig-object py" id="applechess.lichess_bot.Game">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">applechess.lichess_bot.</span></span><span class="sig-name descname"><span class="pre">Game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bot_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">game_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#applechess.lichess_bot.Game" title="Link to this definition">#</a></dt>
-<dd><p>A class that represents a game of chess on Lichess. It plays the game using the ChessAgent class.
-It extends from the threading.Thread class to run the game in a separate thread using the Lichess bot API.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="applechess.lichess_bot.Game.noexcept">
-<span class="sig-name descname"><span class="pre">noexcept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#applechess.lichess_bot.Game.noexcept" title="Link to this definition">#</a></dt>
-<dd><p>Calls a function, and if it throws an ApiError, wait 500ms and try again.
-Useful if the connection momentarily breaks.
-:param func: the function to be called.
-:param args: any arguments that should be passed to the function.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="applechess.lichess_bot.Game.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#applechess.lichess_bot.Game.run" title="Link to this definition">#</a></dt>
-<dd><p>Overrides method of class threading.Thread to run the game loop to play chess on Lichess.
-It handles incoming game events and makes moves using the agent.</p>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 
         </article>
@@ -368,12 +330,6 @@ It handles incoming game events and makes moves using the agent.</p>
 <li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.play_move"><code class="docutils literal notranslate"><span class="pre">ChessAgent.play_move()</span></code></a></li>
 <li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.pprint"><code class="docutils literal notranslate"><span class="pre">ChessAgent.pprint()</span></code></a></li>
 <li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.push_move"><code class="docutils literal notranslate"><span class="pre">ChessAgent.push_move()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#lichess-bot-py">lichess_bot.py</a></li>
-<li><a class="reference internal" href="#applechess.lichess_bot.Game"><code class="docutils literal notranslate"><span class="pre">Game</span></code></a><ul>
-<li><a class="reference internal" href="#applechess.lichess_bot.Game.noexcept"><code class="docutils literal notranslate"><span class="pre">Game.noexcept()</span></code></a></li>
-<li><a class="reference internal" href="#applechess.lichess_bot.Game.run"><code class="docutils literal notranslate"><span class="pre">Game.run()</span></code></a></li>
 </ul>
 </li>
 </ul>
