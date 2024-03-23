@@ -158,6 +158,15 @@ class ChessAgent:
                         # was not developed
                         score -= 0.1
 
+                # penalize excessive queen movement
+                queen = board.pieces(chess.QUEEN, color)
+                if color == chess.WHITE:
+                    squares = chess.SquareSet(chess.BB_RANK_1 | chess.BB_RANK_2)
+                else:
+                    squares = chess.SquareSet(chess.BB_RANK_7 | chess.BB_RANK_8)
+                if len(queen) == 1 and list(queen)[0] in squares:
+                    score += 0.15
+
             elif game_phase == self.GamePhase.MIDGAME:
                 pawns_per_column = self.__pawns_per_column(board, color)
                 opponent_pawns_per_column = self.__pawns_per_column(board, not color)
