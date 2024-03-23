@@ -13,9 +13,11 @@ Classes:
 Dependencies:
     chess (formerly python-chess): A chess library for Python, which provides move generation, validation, and more.
 """
+import os
 
 import random
 from enum import Enum
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import chess
 
@@ -38,9 +40,9 @@ class ChessAgent:
     class GamePhase(Enum):
         """
         Enum class to represent the game phase.
-        Opening is defined as the first 9 moves.
+        Opening is defined as the first 6 moves.
         Midgame is defined as the phase between the opening and the endgame.
-        Endgame is defined as the phase when there are less than 24 points of material on the board.
+        Endgame is defined as the phase when there are less than 11 pieces on the board.
         """
         OPENING = 1
         MIDGAME = 2
@@ -49,7 +51,7 @@ class ChessAgent:
     @staticmethod
     def get_value(piece: chess.Piece) -> int:
         """
-        Get the value of a piece. The value is based on the piece type. If an unknown piece is passed, 0 is returned.
+        Get the value of a piece based on the piece type. If an unknown piece is passed, 0 is returned.
         :param piece: the piece to get the value of.
         :return: the value of the piece.
         """
@@ -68,6 +70,29 @@ class ChessAgent:
                 # unknown piece (probably king), return 0 because it doesn't really mean anything
                 return 0
 
+    @staticmethod
+    def __pawns_per_column(board: chess.Board, color: chess.Color) -> list[int]:
+        pawns_per_column = [0, 0, 0, 0, 0, 0, 0, 0]
+        pawns = board.pieces(chess.PAWN, color)
+        for pawn in pawns:
+            if pawn % 8 == 0:    # A file
+                pawns_per_column[0] += 1
+            elif pawn % 8 == 1:  # B file
+                pawns_per_column[1] += 1
+            elif pawn % 8 == 2:  # C file
+                pawns_per_column[2] += 1
+            elif pawn % 8 == 3:  # D file
+                pawns_per_column[3] += 1
+            elif pawn % 8 == 4:  # E file
+                pawns_per_column[4] += 1
+            elif pawn % 8 == 5:  # F file
+                pawns_per_column[5] += 1
+            elif pawn % 8 == 6:  # G file
+                pawns_per_column[6] += 1
+            elif pawn % 8 == 7:  # H file
+                pawns_per_column[7] += 1
+        return pawns_per_column
+
     def _get_heuristic(self, board: chess.Board, color: chess.Color) -> int:
         """
         Get the heuristic value of a board state for a given color, using various factors such as material,
@@ -81,27 +106,41 @@ class ChessAgent:
 
         if outcome is None:
             # game has not ended yet
-            # point value of material for both players
-            agent_material = 0
-            opponent_material = 0
-
-            for _sq, piece in board.piece_map().items():
-                if piece.color == color:
-                    agent_material += self.get_value(piece)
-                else:
-                    opponent_material += self.get_value(piece)
-
-            # reward difference of material
-            score += agent_material - opponent_material
-
-            if len(board.move_stack) < 9:
-                # if less than 9 moves have been played, it is probably the opening
+            if len(board.move_stack) < 12:
+                # if less than 6 moves have been played, it is probably the opening
                 game_phase = self.GamePhase.OPENING
-            elif agent_material + opponent_material < 24:
-                # if there is less than 24 points of material, it is probably the endgame
+            elif len(board.piece_map()) < 13:
+                # if there are less than 11 pieces on the board, it is probably the endgame
                 game_phase = self.GamePhase.ENDGAME
             else:
                 game_phase = self.GamePhase.MIDGAME
+
+            if game_phase in (self.GamePhase.OPENING, self.GamePhase.MIDGAME):
+                # reward good king position
+                king_square = board.king(color)
+                if color == chess.WHITE:
+                    if king_square in (chess.G1, chess.C1, chess.B1):
+                        score += 0.1
+                else:
+                    if king_square in (chess.G8, chess.C8, chess.B8):
+                        score += 0.1
+
+                # reward control of the center
+                center_squares = [chess.E4, chess.E5, chess.D4, chess.D5]
+                for square in center_squares:
+                    if board.piece_at(square) is None:
+                        num_attackers = len(board.attackers(color, square))
+                        score += 0.15 * num_attackers
+                    elif board.piece_at(square).color == color:
+                        score += 0.4
+                    elif board.piece_at(square).color != color:
+                        score -= 0.4
+
+                pawns_per_column = self.__pawns_per_column(board, color)
+                # punish double pawns
+                for pawns in pawns_per_column:
+                    if pawns > 1:
+                        score -= 0.3
 
             if game_phase == self.GamePhase.OPENING:
                 # reward bishop/knight development
@@ -115,22 +154,68 @@ class ChessAgent:
                     if piece is not None and piece.color == color and (
                             piece.piece_type in (chess.BISHOP, chess.KNIGHT)):
                         # was not developed
-                        score -= 0.5
-
-                # reward castling
-                if board.is_castling(board.peek()):
-                    score += 0.25
-
-                # reward control of the center
-                center_squares = [chess.E4, chess.E5, chess.D4, chess.D5]
-                for square in center_squares:
-                    num_attackers = len(board.attackers(color, square))
-                    score += 0.07 * num_attackers
+                        score -= 0.1
 
             elif game_phase == self.GamePhase.MIDGAME:
-                ...
+                pawns_per_column = self.__pawns_per_column(board, color)
+                opponent_pawns_per_column = self.__pawns_per_column(board, not color)
+
+                # reward passed pawns
+                for i, pawns in enumerate(pawns_per_column):
+                    if pawns > 0 and opponent_pawns_per_column[i] == 0:
+                        score += 0.2
+                # punish opponent's passed pawns
+                for i, pawns in enumerate(opponent_pawns_per_column):
+                    if pawns > 0 and pawns_per_column[i] == 0:
+                        score -= 0.2
+
+                # punish isolated pawns
+                for i, pawns in enumerate(pawns_per_column):
+                    if i == 0:
+                        if pawns > 0 and pawns_per_column[i + 1] == 0:
+                            score -= 0.15
+                    elif i == 7:
+                        if pawns > 0 and pawns_per_column[i - 1] == 0:
+                            score -= 0.15
+                    elif pawns > 0 and (pawns_per_column[i - 1] == 0 and pawns_per_column[i + 1] == 0):
+                        score -= 0.2
+
             elif game_phase == self.GamePhase.ENDGAME:
-                ...
+                pawns_per_column = self.__pawns_per_column(board, color)
+                opponent_pawns_per_column = self.__pawns_per_column(board, not color)
+
+                # reward passed pawns
+                for i, pawns in enumerate(pawns_per_column):
+                    if pawns > 0 and opponent_pawns_per_column[i] == 0:
+                        score += 1
+                # punish opponent's passed pawns
+                for i, pawns in enumerate(opponent_pawns_per_column):
+                    if pawns > 0 and pawns_per_column[i] == 0:
+                        score -= 1
+
+                # reward king activity
+                for move in board.legal_moves:
+                    if board.piece_at(move.from_square).piece_type == chess.KING:
+                        score += 0.1
+
+            # point value of material for both players
+            agent_material = 0
+            opponent_material = 0
+
+            for _sq, piece in board.piece_map().items():
+                if piece.color == color:
+                    agent_material += self.get_value(piece)
+                else:
+                    opponent_material += self.get_value(piece)
+
+            # reward difference of material
+            diff_material = agent_material - opponent_material
+            if game_phase == self.GamePhase.OPENING:
+                score += diff_material
+            elif game_phase == self.GamePhase.MIDGAME:
+                score += 1.5 * diff_material
+            else:
+                score += 3 * diff_material
         else:
             if outcome.winner is None:
                 # game was drawn
@@ -156,55 +241,120 @@ class ChessAgent:
         new_board.push(move)
         return new_board
 
-    def _minimax(self, node: chess.Board, depth: int, color: chess.Color, maximizing_player: bool) -> int:
+    def get_ordered_legal_moves(self, board: chess.Board) -> list[chess.Move]:
         """
-        Minimax algorithm to find the best move for a given color.
-        :param node: the node to evaluate.
+        Get the legal moves of a board, ordered by the agent's preference for faster pruning.
+        This function utilizes the MVV-LVA heuristic.
+        :param board: the board to get the legal moves of.
+        :return: the ordered legal moves.
+        """
+        moves = board.legal_moves
+        sorted_moves = []
+
+        for move in moves:
+            if board.is_capture(move):
+                try:
+                    victim_value = self.get_value(board.piece_at(move.to_square))
+                    attacker_value = self.get_value(board.piece_at(move.from_square))
+                    score = victim_value - attacker_value
+                except AttributeError:
+                    score = 10
+            else:
+                score = -10
+
+            if move.promotion is not None:
+                score += 50
+            if board.is_into_check(move):
+                score += 5
+            sorted_moves.append((score, move))
+
+        sorted_moves.sort(key=lambda x: x[0], reverse=True)
+        return [move for _, move in sorted_moves]
+
+    def _alphabeta(
+            self,
+            node: chess.Board,
+            depth: int,
+            color: chess.Color,
+            maximizing_player: bool,
+            a: float = float("-inf"),
+            b: float = float("inf"),
+            parallelize: bool = True
+    ) -> int:
+        """
+        Alpha-beta pruning algorithm to find the best move for a given board state.
+        :param node: the board state to find the best move for.
         :param depth: the depth of the search tree.
-        :param color: the color to evaluate the node for.
-        :param maximizing_player: whether the current node is a maximizing player.
-        The maximizing player is the agent, while the minimizing player is the opponent.
-        :return: the heuristic value of the node.
+        :param color: the color to find the best move for.
+        :param maximizing_player: the player to maximize the score for. If True, it is the agent's turn.
+        Otherwise, it is the opponent's turn.
+        :param a: alpha value.
+        :param b: beta value.
+        :param parallelize: whether to parallelize the search.
+        :return: the score of the best move.
         """
         # depth is zero or it is a terminal node
         if depth == 0 or node.outcome() is not None:
             return self._get_heuristic(node, color)
 
-        if maximizing_player:
-            value = float("-inf")
-            for move in list(node.legal_moves):
+        if parallelize:
+            with ThreadPoolExecutor(max_workers=os.cpu_count() * 2) as executor:
+                futures = []
+                for move in self.get_ordered_legal_moves(node):
+                    child = self.play_move(node, move)
+                    futures.append(executor.submit(self._alphabeta, child, depth - 1,
+                                                   color, not maximizing_player, a, b, False))
+
+                values = [future.result() for future in as_completed(futures)]
+                if maximizing_player:
+                    return max(values)
+                else:
+                    return min(values)
+        else:
+            if maximizing_player:
+                value = float("-inf")
+                for move in self.get_ordered_legal_moves(node):
+                    child = self.play_move(node, move)
+                    value = max(value, self._alphabeta(child, depth - 1, color, False, a, b, False))
+                    a = max(a, value)
+                    if value > b:
+                        break
+                return value
+
+            value = float("inf")
+            for move in self.get_ordered_legal_moves(node):
                 child = self.play_move(node, move)
-                value = max(value, self._minimax(child, depth - 1, color, False))
+                value = min(value, self._alphabeta(child, depth - 1, color, True, a, b, False))
+                b = min(b, value)
+                if value <= a:
+                    break
             return value
 
-        value = float("inf")
-        for move in list(node.legal_moves):
-            child = self.play_move(node, move)
-            value = min(value, self._minimax(child, depth - 1, color, True))
-        return value
-
-    def _score_move(self, board: chess.Board, move: chess.Move, depth: int) -> int:
+    def get_best_move(self, depth: int, parallelize: bool = False) -> chess.Move:
         """
-        Score a move based on the minimax algorithm.
-        :param board: board to score the move on.
-        :param move: move to score.
+        Agent that plays a move based on the alpha/beta-minimax algorithm.
         :param depth: depth of the search tree.
-        :return: the score of the move.
-        """
-        color = board.turn
-        next_board = self.play_move(board, move)
-        score = self._minimax(next_board, depth - 1, color, False)
-        return score
-
-    def get_best_move(self, depth: int) -> chess.Move:
-        """
-        Agent that plays a move based on the minimax algorithm.
-        :param depth: depth of the search tree.
+        :param parallelize: whether to parallelize the search.
         :return: the best move to play.
         """
+        color = self.board.turn
         scores = {}
-        for move in list(self.board.legal_moves):
-            scores[move] = self._score_move(self.board, move, depth)
+        if parallelize:
+            with ThreadPoolExecutor() as executor:
+                future_to_move = {}
+                for move in list(self.board.legal_moves):
+                    next_board = self.play_move(self.board, move)
+                    future_to_move = {executor.submit(self._alphabeta, next_board, depth - 1, color,
+                                                      False, float("-inf"), float("inf"), True): move}
+                for future in as_completed(future_to_move):
+                    move = future_to_move[future]
+                    score = future.result()
+                    scores[move] = score
+
+        else:
+            for move in list(self.board.legal_moves):
+                next_board = self.play_move(self.board, move)
+                scores[move] = self._alphabeta(next_board, depth - 1, color, False, True)
 
         best_moves = [move for move in scores.keys() if scores[move] == max(scores.values())]
         return random.choice(best_moves)
@@ -223,7 +373,7 @@ class ChessAgent:
         except ValueError:
             self.board.push_san(move)
 
-    def agent_gen_push_move(self, depth: int = 3) -> chess.Move:
+    def agent_gen_push_move(self, depth: int) -> chess.Move:
         """
         Generate the best move for the agent and push it.
         :param depth: depth of the search tree.
@@ -232,9 +382,10 @@ class ChessAgent:
         self.board.push(move)
         return move
 
-    def interactive_terminal(self, color: chess.Color = chess.WHITE) -> None:
+    def interactive_terminal(self, color: chess.Color = chess.WHITE, depth: int = 3) -> None:
         """
         Play an interactive game in the terminal against the agent.
+        :param depth: depth of the search tree.
         :param color: color to play as.
         """
         while self.board.outcome() is None:
@@ -242,9 +393,9 @@ class ChessAgent:
                 self.pprint()
                 move = input("Input SAN: ")
                 self.push_move(move)
-                self.agent_gen_push_move()
+                self.agent_gen_push_move(depth)
             else:
-                self.agent_gen_push_move()
+                self.agent_gen_push_move(depth)
                 self.pprint()
                 move = input("Input SAN: ")
                 self.push_move(move)

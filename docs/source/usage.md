@@ -1,7 +1,7 @@
 # Usage
 
-The easiest way to play the engine is to [play the bot on Lichess](https://lichess.org/@/apple-chess) by sending it a challenge request (variants and bullet/ultrabullet are not yet supported).
-The engine may run slow if too many people are playing it. 
+The easiest way to play the engine is to [play the bot on Lichess](https://lichess.org/@/apple-chess) by sending it a challenge request (variants and ultrabullet are not yet supported).
+The engine may run slow if too many people are playing it. If the bot is offline, you can run it locally.
 
 ## Running Applechess Locally
 

@@ -4,8 +4,8 @@ Applechess is a simple chess engine, written using the minimax and alpha-beta pr
 
 See more information about the two algorithms on the Wikipedia pages: [minimax](https://en.wikipedia.org/wiki/Minimax) and [alpha-beta pruning](https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning).
 
-The easiest way to play the engine is to [play the bot on Lichess](https://lichess.org/@/apple-chess) by sending it a challenge request (variants and bullet/ultrabullet are not yet supported).
-The engine may run slow if too many people are playing it. 
+The easiest way to play the engine is to [play the bot on Lichess](https://lichess.org/@/apple-chess) by sending it a challenge request (variants and ultrabullet are not yet supported).
+The engine may run slow if too many people are playing it. If the bot is offline, you can run it locally. 
 
 ## Running Applechess Locally
 

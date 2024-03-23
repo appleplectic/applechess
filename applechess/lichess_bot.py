@@ -31,14 +31,11 @@ import logging
 from typing import Callable
 
 import berserk
-from berserk.exceptions import ApiError
+from berserk.exceptions import ApiError, ResponseError
 import chess
 from dotenv import dotenv_values
 
 from chess_agent import ChessAgent
-
-# Depth of the minimax algorithm
-DEPTH = 3
 
 
 class Game(threading.Thread):
@@ -46,11 +43,12 @@ class Game(threading.Thread):
     A class that represents a game of chess on Lichess. It plays the game using the ChessAgent class.
     It extends from the threading.Thread class to run the game in a separate thread using the Lichess bot API.
     """
-    def __init__(self, bot_client: berserk.Client, game_id: str, **kwargs):
+    def __init__(self, bot_client: berserk.Client, game_id: str, depth: int, **kwargs):
         """
         Initialize the Game class with the Lichess bot client, the game ID, and optional keyword arguments.
         :param bot_client: Lichess bot client to interact with the API.
         :param game_id: ID of the game to play.
+        :param depth: Depth of the minimax search algorithm for the agent.
         :param kwargs: Other keyword arguments to pass to the threading.Thread class.
         """
         super().__init__(**kwargs)
@@ -58,6 +56,7 @@ class Game(threading.Thread):
         self.client = bot_client
         self.stream = bot_client.bots.stream_game_state(game_id)
         self.agent = ChessAgent()
+        self.depth = depth
         self.color = chess.WHITE  # should be overwritten
         logging.debug("Successfully initialized Game() class.")
 
@@ -86,7 +85,7 @@ class Game(threading.Thread):
         """
         if game_state["status"] != "created" and game_state["status"] != "started":
             # the game ended, should gracefully exit
-            logging.debug(f"Game successfully ended, closing thread {threading.current_thread().ident}")
+            logging.info(f"Game successfully ended, closing thread {threading.current_thread().ident}")
             return
 
         moves = game_state["moves"].split(" ")
@@ -98,13 +97,13 @@ class Game(threading.Thread):
             # even number of moves on the board, it is white's turn
             if self.color == chess.WHITE:
                 # it is the agent's move
-                move = self.agent.get_best_move(DEPTH)
+                move = self.agent.get_best_move(self.depth)
                 self.noexcept(self.client.bots.make_move, self.game_id, move.uci())
         else:
             # odd number of moves, it is black's turn
             if self.color == chess.BLACK:
                 # it is the agent's move
-                move = self.agent.get_best_move(DEPTH)
+                move = self.agent.get_best_move(self.depth)
                 self.noexcept(self.client.bots.make_move, self.game_id, move.uci())
 
     def noexcept(self, func: Callable, *args) -> None:
@@ -117,8 +116,11 @@ class Game(threading.Thread):
         try:
             func(*args)
             logging.debug("Successfully moved piece (noexcept).")
+        except ResponseError:
+            logging.error("ResponseError received, assuming game is over; ending thread...")
+            return
         except ApiError:
-            logging.error("ApiError handled...")
+            logging.error("ApiError received, assuming connection lost; restarting...")
             time.sleep(0.8)
             func(*args)
             # reinitialize the stream, just in case
@@ -143,7 +145,7 @@ if __name__ == "__main__":
 
     for event in client.bots.stream_incoming_events():
         if event["type"] == "challenge":
-            if event["challenge"]["timeControl"] == "bullet" or event["challenge"]["timeControl"] == "ultraBullet":
+            if event["challenge"]["timeControl"] == "ultraBullet":
                 client.bots.decline_challenge(event["challenge"]["id"], "tooFast")
                 logging.info(f"Declined challenge {event["challenge"]["id"]} due to time control.")
             elif event["challenge"]["variant"]["name"] != "Standard":
@@ -152,6 +154,14 @@ if __name__ == "__main__":
             else:
                 client.bots.accept_challenge(event["challenge"]["id"])
         elif event["type"] == "gameStart":
-            game = Game(client, event["game"]["gameId"])
+            time_control = event["game"]["perf"]
+            if time_control == "bullet":
+                depth = 2
+            elif time_control == "blitz":
+                depth = 3
+            else:
+                depth = 4
+
+            game = Game(client, event["game"]["gameId"], depth)
             game.start()
             logging.info(f"Accepted challenge {event["game"]["gameId"]}; deferring to thread {game.ident}")
