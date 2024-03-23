@@ -308,8 +308,7 @@ class ChessAgent:
                 values = [future.result() for future in as_completed(futures)]
                 if maximizing_player:
                     return max(values)
-                else:
-                    return min(values)
+                return min(values)
         else:
             if maximizing_player:
                 value = float("-inf")

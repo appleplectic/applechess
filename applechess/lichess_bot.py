@@ -128,15 +128,12 @@ class Game(threading.Thread):
             logging.warning("Successfully handled ApiError.")
 
 
-if __name__ == "__main__":
+def main(api_key: str) -> None:
+    """
+    Main function to run the Lichess bot. It initializes the client with the API key and listens for incoming events.
+    :param api_key: the API key for the Lichess bot. Do not hardcode the key, use a .env file or similar.
+    """
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-    config = {
-        **dotenv_values("../.env"),
-        **dotenv_values(".env"),     # load lichess API key from either applechess/ folder or root directory
-        **os.environ                 # override loaded values with environment variables
-    }
-    api_key = config["LICHESS_API_KEY"]
 
     session = berserk.TokenSession(api_key)
     client = berserk.Client(session)
@@ -147,21 +144,31 @@ if __name__ == "__main__":
         if event["type"] == "challenge":
             if event["challenge"]["timeControl"] == "ultraBullet":
                 client.bots.decline_challenge(event["challenge"]["id"], "tooFast")
-                logging.info(f"Declined challenge {event["challenge"]["id"]} due to time control.")
+                logging.info(f"Declined challenge {event['challenge']['id']} due to time control.")
             elif event["challenge"]["variant"]["name"] != "Standard":
                 client.bots.decline_challenge(event["challenge"]["id"], "variant")
-                logging.info(f"Declined challenge {event["challenge"]["id"]} due to variant.")
+                logging.info(f"Declined challenge {event['challenge']['id']} due to variant.")
             else:
                 client.bots.accept_challenge(event["challenge"]["id"])
         elif event["type"] == "gameStart":
             time_control = event["game"]["perf"]
             if time_control == "bullet":
-                depth = 2
+                set_depth = 2
             elif time_control == "blitz":
-                depth = 3
+                set_depth = 3
             else:
-                depth = 4
+                set_depth = 4
 
-            game = Game(client, event["game"]["gameId"], depth)
+            game = Game(client, event["game"]["gameId"], set_depth)
             game.start()
-            logging.info(f"Accepted challenge {event["game"]["gameId"]}; deferring to thread {game.ident}")
+            logging.info(f"Accepted challenge {event['game']['gameId']}; deferring to thread {game.ident}")
+
+
+if __name__ == "__main__":
+    config = {
+        **dotenv_values("../.env"),
+        **dotenv_values(".env"),      # load lichess API key from either applechess/ folder or root directory
+        **os.environ                  # override loaded values with environment variables
+    }
+    key = config["LICHESS_API_KEY"]
+    main(key)

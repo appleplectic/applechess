@@ -7,6 +7,8 @@
 
 # Python
 __pycache__/
+dist/
+applechess.egg-info
 
 # JetBrains IDEs
 .idea/**/workspace.xml

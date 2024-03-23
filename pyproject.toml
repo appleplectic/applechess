@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "applechess"
+authors = [
+    {name = "Levin Ma", email="llmar1000000@gmail.com"}
+]
+version = "0.1"
+description = "A simple alpha-beta chess engine with a Lichess bot interface."
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["chess", "engine", "alpha", "beta", "minimax", "applechess", "apple", "pruning"]
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Games/Entertainment :: Board Games",
+]
+dependencies = [
+    "chess",
+    "berserk",
+    "python-dotenv"
+]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx",
+    "myst_parser",
+    "furo"
+]
+
+[project.urls]
+Homepage = "https://github.com/appleplectic/applechess"
+Documentation = "https://appleplectic.github.io/applechess/"
+Repository = "https://github.com/appleplectic/applechess.git"
+Issues = "https://github.com/appleplectic/applechess/issues"
