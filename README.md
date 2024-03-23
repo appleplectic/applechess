@@ -23,7 +23,6 @@ agent.interactive_terminal()
 ```
 Check the documentation for usage details. Note that the API is not stable, and will change frequently.
 
-
 ### Building from Source
 
 In order to run the engine locally, first install Python from [python.org](https://python.org) or your package manager.

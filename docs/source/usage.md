@@ -5,14 +5,9 @@ The engine may run slow if too many people are playing it. If the bot is offline
 
 ## Running Applechess Locally
 
-In order to run the engine locally, first install Python from [python.org](https://python.org) or your package manager.
-Python 3.8+ is recommended.
-
-Then, clone and install the requirements. You can optionally create a virtual environment before installing the packages.
+Applechess is now a package on PyPI:
 ```bash
-git clone https://github.com/appleplectic/applechess.git
-cd applechess
-python -m pip install -r requirements.txt
+pip install applechess
 ```
 
 To use the `ChessAgent` class:
@@ -23,6 +18,18 @@ agent = ChessAgent()
 agent.interactive_terminal()
 ```
 Check the documentation for usage details. Note that the API is not stable, and will change frequently.
+
+### Building from Source
+
+In order to run the engine locally, first install Python from [python.org](https://python.org) or your package manager.
+Python 3.10+ is required.
+
+Then, clone and install the requirements. You can optionally create a virtual environment before installing the packages.
+```bash
+git clone https://github.com/appleplectic/applechess.git
+cd applechess
+python -m pip install -r requirements.txt
+```
 
 ### Running the Lichess bot locally
 
