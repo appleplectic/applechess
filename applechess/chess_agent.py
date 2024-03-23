@@ -93,7 +93,7 @@ class ChessAgent:
                 pawns_per_column[7] += 1
         return pawns_per_column
 
-    def _get_heuristic(self, board: chess.Board, color: chess.Color) -> int:
+    def _get_heuristic(self, board: chess.Board, color: chess.Color) -> float:
         """
         Get the heuristic value of a board state for a given color, using various factors such as material,
         game phase, pawn structure, etc.
@@ -105,6 +105,8 @@ class ChessAgent:
         outcome = board.outcome()
 
         if outcome is None:
+            if board.can_claim_draw():
+                return 0.5
             # game has not ended yet
             if len(board.move_stack) < 12:
                 # if less than 6 moves have been played, it is probably the opening
@@ -219,7 +221,7 @@ class ChessAgent:
         else:
             if outcome.winner is None:
                 # game was drawn
-                score += 1
+                score += 0.5
             elif outcome.winner == color:
                 # agent won the game
                 score += 1e6
@@ -280,7 +282,7 @@ class ChessAgent:
             a: float = float("-inf"),
             b: float = float("inf"),
             parallelize: bool = True
-    ) -> int:
+    ) -> float:
         """
         Alpha-beta pruning algorithm to find the best move for a given board state.
         :param node: the board state to find the best move for.
