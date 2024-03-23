@@ -197,12 +197,8 @@
 The engine may run slow if too many people are playing it. If the bot is offline, you can run it locally.</p>
 <section id="running-applechess-locally">
 <h2>Running Applechess Locally<a class="headerlink" href="#running-applechess-locally" title="Link to this heading">#</a></h2>
-<p>In order to run the engine locally, first install Python from <a class="reference external" href="https://python.org">python.org</a> or your package manager.
-Python 3.8+ is recommended.</p>
-<p>Then, clone and install the requirements. You can optionally create a virtual environment before installing the packages.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/appleplectic/applechess.git
-<span class="nb">cd</span><span class="w"> </span>applechess
-python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+<p>Applechess is now a package on PyPI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>applechess
 </pre></div>
 </div>
 <p>To use the <code class="docutils literal notranslate"><span class="pre">ChessAgent</span></code> class:</p>
@@ -213,6 +209,17 @@ python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </sp
 </pre></div>
 </div>
 <p>Check the documentation for usage details. Note that the API is not stable, and will change frequently.</p>
+<section id="building-from-source">
+<h3>Building from Source<a class="headerlink" href="#building-from-source" title="Link to this heading">#</a></h3>
+<p>In order to run the engine locally, first install Python from <a class="reference external" href="https://python.org">python.org</a> or your package manager.
+Python 3.10+ is required.</p>
+<p>Then, clone and install the requirements. You can optionally create a virtual environment before installing the packages.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/appleplectic/applechess.git
+<span class="nb">cd</span><span class="w"> </span>applechess
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</section>
 <section id="running-the-lichess-bot-locally">
 <h3>Running the Lichess bot locally<a class="headerlink" href="#running-the-lichess-bot-locally" title="Link to this heading">#</a></h3>
 <p>Follow the same instructions above to clone and install dependencies.</p>
@@ -305,6 +312,7 @@ python<span class="w"> </span>lichess_bot.py
             <ul>
 <li><a class="reference internal" href="#">Usage</a><ul>
 <li><a class="reference internal" href="#running-applechess-locally">Running Applechess Locally</a><ul>
+<li><a class="reference internal" href="#building-from-source">Building from Source</a></li>
 <li><a class="reference internal" href="#running-the-lichess-bot-locally">Running the Lichess bot locally</a></li>
 <li><a class="reference internal" href="#building-the-documentation">Building the Documentation</a></li>
 </ul>
