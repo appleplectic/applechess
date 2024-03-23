@@ -211,38 +211,49 @@
 <dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.GamePhase">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GamePhase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.GamePhase" title="Link to this definition">#</a></dt>
 <dd><p>Enum class to represent the game phase.
-Opening is defined as the first 9 moves.
+Opening is defined as the first 6 moves.
 Midgame is defined as the phase between the opening and the endgame.
-Endgame is defined as the phase when there are less than 24 points of material on the board.</p>
+Endgame is defined as the phase when there are less than 11 pieces on the board.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.agent_gen_push_move">
-<span class="sig-name descname"><span class="pre">agent_gen_push_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Move</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.agent_gen_push_move" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">agent_gen_push_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Move</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.agent_gen_push_move" title="Link to this definition">#</a></dt>
 <dd><p>Generate the best move for the agent and push it.
 :param depth: depth of the search tree.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.get_best_move">
-<span class="sig-name descname"><span class="pre">get_best_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Move</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.get_best_move" title="Link to this definition">#</a></dt>
-<dd><p>Agent that plays a move based on the minimax algorithm.
+<span class="sig-name descname"><span class="pre">get_best_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallelize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Move</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.get_best_move" title="Link to this definition">#</a></dt>
+<dd><p>Agent that plays a move based on the alpha/beta-minimax algorithm.
 :param depth: depth of the search tree.
+:param parallelize: whether to parallelize the search.
 :return: the best move to play.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.get_ordered_legal_moves">
+<span class="sig-name descname"><span class="pre">get_ordered_legal_moves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Board</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Move</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.get_ordered_legal_moves" title="Link to this definition">#</a></dt>
+<dd><p>Get the legal moves of a board, ordered by the agent’s preference for faster pruning.
+This function utilizes the MVV-LVA heuristic.
+:param board: the board to get the legal moves of.
+:return: the ordered legal moves.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.get_value">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">piece</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Piece</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.get_value" title="Link to this definition">#</a></dt>
-<dd><p>Get the value of a piece. The value is based on the piece type. If an unknown piece is passed, 0 is returned.
+<dd><p>Get the value of a piece based on the piece type. If an unknown piece is passed, 0 is returned.
 :param piece: the piece to get the value of.
 :return: the value of the piece.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="applechess.chess_agent.ChessAgent.interactive_terminal">
-<span class="sig-name descname"><span class="pre">interactive_terminal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.interactive_terminal" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">interactive_terminal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#applechess.chess_agent.ChessAgent.interactive_terminal" title="Link to this definition">#</a></dt>
 <dd><p>Play an interactive game in the terminal against the agent.
+:param depth: depth of the search tree.
 :param color: color to play as.</p>
 </dd></dl>
 
@@ -325,6 +336,7 @@ Endgame is defined as the phase when there are less than 24 points of material o
 <li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.GamePhase"><code class="docutils literal notranslate"><span class="pre">ChessAgent.GamePhase</span></code></a></li>
 <li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.agent_gen_push_move"><code class="docutils literal notranslate"><span class="pre">ChessAgent.agent_gen_push_move()</span></code></a></li>
 <li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.get_best_move"><code class="docutils literal notranslate"><span class="pre">ChessAgent.get_best_move()</span></code></a></li>
+<li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.get_ordered_legal_moves"><code class="docutils literal notranslate"><span class="pre">ChessAgent.get_ordered_legal_moves()</span></code></a></li>
 <li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.get_value"><code class="docutils literal notranslate"><span class="pre">ChessAgent.get_value()</span></code></a></li>
 <li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.interactive_terminal"><code class="docutils literal notranslate"><span class="pre">ChessAgent.interactive_terminal()</span></code></a></li>
 <li><a class="reference internal" href="#applechess.chess_agent.ChessAgent.play_move"><code class="docutils literal notranslate"><span class="pre">ChessAgent.play_move()</span></code></a></li>
